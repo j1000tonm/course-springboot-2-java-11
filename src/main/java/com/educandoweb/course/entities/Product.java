@@ -8,8 +8,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_product")
@@ -26,6 +29,9 @@ public class Product implements Serializable {
 	
 	@Transient
 	private Set<Category> categories = new HashSet<>();
+	
+	@OneToMany(mappedBy = "id.product")
+	private Set<OrderItem> items = new HashSet<>();
 	
 	public Product() {
 	}
@@ -83,6 +89,15 @@ public class Product implements Serializable {
 		return categories;
 	}
 
+	@JsonIgnore
+	public Set<Order> getOrders() {
+		Set<Order> set = new HashSet<>();
+		for (OrderItem x : items) {
+			set.add(x.getOrder());
+		}
+		return set;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
